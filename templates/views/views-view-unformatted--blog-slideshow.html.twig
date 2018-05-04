@@ -1,0 +1,60 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<div id="blog-carousel-wrapper">
+  <div id="blogCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+    <div class="carousel-inner" role="listbox">
+      {% for row in rows %}
+        {%
+    set row_classes = [
+      default_row_class ? 'views-row',
+    ]
+        %}
+        {% if loop.first %}
+          <div class='item active' data-index="{{ loop.index0 }}">{{ row.content }}</div>
+        {% else %}
+          <div class='item' data-index="{{ loop.index0 }}">{{ row.content }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div id="blog-carousel-controls-wrapper">    
+    <div id="blog-carousel-controls">    
+      <div class="left" data-target="#blogCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </div>    
+      <ul class="blog-carousel-indicators">
+        {% for row in rows %}
+          {% if loop.first %}
+            <li data-target="#blogCarousel" data-slide-to="0" data-index="{{ loop.index0 }}" class="active"></li>
+            {% else %}
+            <li data-target="#blogCarousel" data-slide-to="{{ loop.index0 }}" data-index="{{ loop.index0 }}"></li>
+            {% endif %}
+          {% endfor %}
+      </ul>    
+      <div class="right" data-target="#blogCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </div>
+    </div>
+  </div>
+</div>

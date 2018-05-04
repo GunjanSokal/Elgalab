@@ -1,0 +1,71 @@
+{#
+/**
+ * @file
+ * Display Suite 2 column template, centered
+ *
+ * Available variables:
+ * - outer_wrapper: outer wrapper element
+ * - left_wrapper: wrapper element around left region
+ * - right_wrapper: wrapper element around right region
+ * - attributes: layout attributes
+ * - left_attributes: attributes for left region
+ * - right_attributes: attributes for right region
+ * - left: content of left region
+ * - right: content of right region
+ */
+#}
+
+<{{ outer_wrapper }}{{ attributes.addClass('ds-1col', 'clearfix') }}>
+
+<div>
+  
+  <div id="homepageCarousel" class="homepage-slideshow-wrapper">
+      <div class="row">
+          <div class="col-sm-12">
+              <div class="container">
+                  <div class="carousel-container">
+                      <div class="carousel">
+
+                          <div class="slide">                   
+                              <div class="banner-image-overlay"> </div>
+                                  {{ content_top.field_home_page_banner }}
+                             
+                          <div class="home-page-banner" >
+                                 <div class='home-page-banner-title'>
+                                      {{ content_top.field_home_page_banner_text }}
+                                 </div>
+                                          <div class="home-page-banner-link">
+                                             <a href="{{ content_top.field_home_page_banner_link[0]['#url'] }}">{{ content_top.field_home_page_banner_link[0]['#title'] }}</a>                
+                                          </div>
+                              </div>
+                          </div>
+                      
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  {{ content_top|without('field_home_page_banner','field_home_page_banner_link','field_home_page_banner_text') }}
+</div>
+
+<div class="promotional-tiles-wrapper">
+  <div class="container">
+    <div class="row">
+      <div class="template-col-left col-xs-12 col-sm-offset-0 col-sm-12 col-md-9 col-lg-9">
+        {{ left }}
+      </div>
+      <div class="template-col-right hidden-xs hidden-sm col-md-3 col-lg-3">
+        {{ right }}
+      </div>
+    </div>
+  </div>
+</div>
+        
+<div>   
+  {{ content_bottom }}
+</div>
+
+</{{ outer_wrapper }}>
+

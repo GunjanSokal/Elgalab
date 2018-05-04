@@ -1,0 +1,128 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ *
+ * @ingroup templates
+ */
+#}
+<!-- <script src="http://code.jquery.com/jquery-3.3.1.js"> </script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"> </script> -->
+{% if node_id== 33%}
+<div id="checkbox-filter">
+    <ul>
+      <div id="application-checkbox">        
+          <h1>Application</h1>
+        {% set applicationCount = 0   %}
+        {% for key,value in application_title %}
+              <li>
+                <label>
+                  <input type="checkbox" value="{{ key }}" name="application" id="{{ key }}">{{ value }}
+                </label>
+              </li> 
+             {% if applicationCount == 5 %}
+               <div id="toggle-application" class="toggle-application">
+             {% endif%}
+             {% set applicationCount = applicationCount + 1 %}
+        {% endfor %}
+      </div>
+      </div>
+    </ul>
+    <h2 id="show-less-application">Show Less -</h2>
+    <h2 id="show-more-application">Show More +</h2>
+
+    <ul>
+      <div id="water-quality-checkbox">
+          <h1>Water Purity</h1>
+         {% set purityCount = 0   %}
+        {% for key,value in water_quality %}
+          <li>
+            <label>
+              <input type="checkbox" value="{{ key }}" name="water-quality" id="{{ key }}">{{ value }}
+            </label>
+          </li> 
+          {% if purityCount == 2 %}
+              <div id="toggle-purity" class="toggle-purity">
+          {% endif%}
+          {% set purityCount = purityCount + 1 %}
+        {% endfor %}
+      </div>
+    </div>
+    </ul>
+    
+      <h2 id="show-less-purity">Show Less -</h2>
+      <h2 id="show-more-purity">Show More +</h2>
+    
+    <div class="slidecontainer">
+      <p class=daily-usage-volume>Daily Usage Volume</p>
+      <p>Litres</p>
+      <div class="usage-filter-text"> <p>0</p><p class="range-1000">1001+</p></div>
+      <input type="range" name="waterUsage" min="0" max="1000" value="{{usage}}" id="usage-slider" class="usage-slider">
+    </div>
+</div>
+
+
+{% else %}
+
+  {% import _self as menus %}
+
+{#
+  We call a macro which calls itself to render the full tree.
+  @see http://twig.sensiolabs.org/doc/tags/macro.html
+#}
+{{ menus.menu_links(items, attributes, 0, searchform) }}
+
+{% macro menu_links(items, attributes, menu_level, searchform) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if menu_level == 0 %}
+      <ul{{ attributes.addClass('menu', 'nav', 'navbar-nav') }}>
+      {% else %}
+        <ul{{ attributes}}>
+        {% endif %}
+        {% for item in items %}
+          {%
+        set item_classes = [
+          'expanded',
+          item.in_active_trail ? 'active',
+        ]
+          %}
+          {%
+        set new_item_classes = [
+          'expanded',
+          item.in_active_trail ? 'active',
+          'target',
+          'target-menu-item-'~loop.index,
+        ]
+          %}
+          {% if item.title == "search-icon" %}
+            <li {{ item.attributes.addClass(new_item_classes) }}>
+              <a name='menu-item-{{ loop.index }}' class='level-0 main-menu-link' href=""><span class="glyphicon glyphicon-search"></span></a>
+            {% elseif item.title == "search-box" %}
+            <li {{ item.attributes.addClass(item_classes) }}>
+              {{ searchform }}
+            {% elseif menu_level == 0 %}            
+            <li {{ item.attributes.addClass(new_item_classes) }}>
+              <a name='menu-item-{{ loop.index }}' class='level-0 main-menu-link' href="{{ item.url }}">{{ item.title }}</a>
+            {% else %}
+            <li {{ item.attributes.addClass(item_classes) }}>
+              <a href="{{ item.url }}">{{ item.title }}</a>
+            {% endif %}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes.removeClass('nav', 'navbar-nav'), menu_level + 1, searchform) }}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endmacro %}
+{% endif%}

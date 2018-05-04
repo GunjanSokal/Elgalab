@@ -1,0 +1,47 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a fieldgroup html element.
+ *
+ * Available variables:
+ * - title: Title of the group.
+ * - title_element: Element to wrap the title.
+ * - children: The children of the group.
+ * - wrapper_element: The html element to use
+ * - attributes: A list of HTML attributes for the group wrapper.
+ *
+ * @see template_preprocess_field_group_html_element()
+ *
+ * @ingroup themeable
+ */
+#}
+
+
+<div id="homepageCarousel" class="homepage-slideshow-wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="container">
+                <div class="carousel-container">
+                    <div class="carousel">
+
+                        <div class="slide">                   
+                            <div class="banner-image-overlay"> </div>
+                                {# item.content #}
+                           
+                        <div class="home-page-banner" >
+                               <div class='home-page-banner-title'>
+                                    {# title #}
+                               </div>
+                                        <div class="home-page-banner-link">
+                                           <a href="{# link #}">FIND OUT NOW</a>                
+                                        </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

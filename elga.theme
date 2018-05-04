@@ -1,0 +1,244 @@
+<?php
+
+/**
+ * @file
+ * Bootstrap sub-theme.
+ *
+ * Place your custom PHP code in this file.
+ */
+
+/**
+ * Implements hook_theme_suggestions_field_alter().
+ * 
+ * Used by the product selector view, to theme view fields
+ */
+function elga_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $content_type = $node->bundle();
+    $field_name = $variables['element']['#field_name'];
+    $suggestions[] = 'field__' . $field_name . '__wrapper__' . $content_type;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ */
+function elga_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $content_type = $node->bundle();
+    $suggestions[] = 'page__' . $content_type;
+    $suggestions[] = 'page__' . $content_type . '__' . $node->id();
+  }
+}
+
+/**
+ * Implements theme_preprocess_html().
+ *
+ */
+function elga_preprocess_html(&$variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+   $variables['attributes']['class'][] = 'page-node-' . $node->id();
+  }
+}
+
+
+/**
+ * Implements hook_theme_suggestions_file_link_alter().
+ * Add node type to theme hook suggestions for file_link 
+ */
+function elga_theme_suggestions_file_link_alter(&$suggestions, $vars, $hook) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $content_type = $node->bundle();
+    $suggestions[] = 'file_link__' . $content_type;
+  }
+}
+
+/**
+ * Implements template_preprocess_file_link
+ * 
+ * @param array $variables
+ */
+function elga_preprocess_file_link(&$variables) {
+  $variables['file_type'] = str_replace('application/', '', $variables['file']->getMimeType());
+}
+
+/**
+ * Implements theme_preprocess_links__language_block
+ * @param type $variables
+ */
+function elga_preprocess_links__language_block(&$variables) {
+  // Pass the current language code to the template
+  $variables['lang_code'] = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  foreach ($variables['links'] as $key => $link) {
+    if (isset($link['link']['#options']['language']) && isset($link['link']['#url'])) {
+      // Create the url string for each language
+      $variables['links'][$key]['href'] = \Drupal::url(
+              $link['link']['#url']->getRouteName(), $link['link']['#url']->getRouteParameters(), array(
+            'language' => $link['link']['#options']['language']
+      ));
+      // Shorten language text for languages such as 'Português, Brazil'
+//      $text_array = explode(',', $variables['links'][$key]['text']);
+//      $variables['links'][$key]['text'] = array_shift($text_array);
+    }
+  }
+  ksort($variables['links']);
+}
+
+function elga_preprocess_eck_entity__pageless_node__promotional_banner(&$variables) {
+
+  if (isset($variables['entity']['#pageless_node']->field_background_image[0]->entity->uri->value)) {
+    $variables['background_url'] = file_create_url($variables['entity']['#pageless_node']->field_background_image[0]->entity->uri->value);
+  };
+}
+
+function elga_preprocess_field__pageless_node__promotional_banner(&$variables) {
+
+  if (isset($variables['element']['#object']->field_background_image[0]->entity->uri->value)) {
+    $variables['background_url'] = file_create_url($variables['element']['#object']->field_background_image[0]->entity->uri->value);
+  }
+}
+
+// --- HERO Image on Product pages ---
+function elga_preprocess_field__default__node__field_image__product(&$variables) {
+  if (isset($variables['element']['#object']->field_image[0]->entity->uri->value)) {
+    $variables['background_url'] = file_create_url($variables['element']['#object']->field_image[0]->entity->uri->value);
+  }
+  $variables['url'] = $GLOBALS['base_url'];
+  $variables['base_url'] = base_path();
+}
+
+
+// --- HERO Image on Product Category pages - main image---
+function elga_preprocess_field__default__node__field_image__product_category(&$variables) {
+  if (isset($variables['element']['#object']->field_image[0]->entity->uri->value)) {
+    $variables['background_url'] = file_create_url($variables['element']['#object']->field_image[0]->entity->uri->value);
+  }
+}
+
+function elga_preprocess_field__field_blog_category__wrapper__article(&$variables) {
+  $variables['tid'] = $variables['element']['#object']->field_blog_category[0]->entity->tid->value;
+}
+function elga_preprocess_field__default__node_author__article(&$variables) {
+  $variables['uid'] = $variables['element']['#object']->uid[0]->entity->uid->value;
+  $variables['user_name'] = $variables['element']['#object']->uid[0]->entity->name->value;
+}
+// --- HERO Image on Product Category pages - sub-category image ---
+function elga_preprocess_field__taxonomy_term__field_image__product_sub_category(&$variables) {
+  if (isset($variables['element']['#object']->field_image[0]->entity->uri->value)) {
+    $variables['background_url'] = file_create_url($variables['element']['#object']->field_image[0]->entity->uri->value);
+  }
+}
+
+/**
+ * Implements template_preprocess_field__node__field_case_studies__product
+ * For each case study, set the #path variable to the node path.
+ * 
+ * @param type $variables
+ */
+function elga_preprocess_field__node__field_case_studies__product(&$variables) {
+  foreach ($variables['items'] as $key => $item) {
+    $url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $item['content']['#node']->id()]);
+    $variables['items'][$key]['#path'] = $url;
+  }
+}
+
+function elga_preprocess_field__node__field_home_page_text(&$variables) {
+  $variables['title'] = $variables['element']['#object']->field_home_page_text[0]->value;
+}
+
+// Function for Home page Banner
+function elga_preprocess_field__node__field_home_page_banner(&$variables) {
+  $variables['title'] = $variables['element']['#object']->field_home_page_banner_text[0]->value;
+  $variables['link'] = $variables['element']['#object']->field_home_page_banner_link[0]->uri;
+
+}
+
+//For home page blogs
+                         
+function elga_preprocess_field__field_welcome_text(&$variables) {
+  $block = \Drupal\block\Entity\Block::load('views_block__homepage_blogs_block_block_1');
+  $variables['homepage_blogs'] = \Drupal::entityTypeManager()
+  ->getViewBuilder('block')
+  ->view($block);
+}
+
+
+//For Dropdown on application Landing page 
+
+function elga_preprocess_views_view__applications(&$variables) {
+  $query = \Drupal::database()->select('node_field_data', 'y1');
+  $query->addField('y1', array('title', 'nid'));
+  $query->addField('y1', 'title');
+  $query->join('node', 'y2', 'y1.nid = y2.nid');
+  $query->condition('y1.status', 1);
+  $query->condition('y1.type','application');
+  $query= $query->execute()->fetchAll();
+  foreach ($query as $key => $value) {
+    $dropdown_values[]=$value->title;
+  }
+  $variables['application_dropdown']=$dropdown_values;
+
+  $block = \Drupal\block\Entity\Block::load('views_block__applications_block_1');
+  $variables['application'] = \Drupal::entityTypeManager()
+  ->getViewBuilder('block')
+  ->view($block);
+}
+
+
+function elga_preprocess_field__field_application_content(&$variables) {
+    if ($variables['field_name'] == 'field_application_content') {
+      $node = \Drupal::routeMatch()->getParameter('node');
+      $field_node = array();
+      $path = array();
+      $alias = array();
+      foreach ($node->get('field_suitable_applications')->getValue() as $key => $value) {
+        $id = $value['target_id'];
+        $alias[] = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$id);
+        $node_data = \Drupal\node\Entity\Node::load($id);
+        $tid = $node_data->field_image->target_id;
+        $file = \Drupal\file\Entity\File::load($tid);
+        $path[] = isset($file)?($file->url()):"";
+        $field_node[] = $node_data;
+      }
+      $variables['first_field'] = $field_node;
+      $variables['image'] = $path;
+      $variables['alias'] = $alias;
+    }
+}
+
+
+
+function elga_preprocess_menu__main(&$variables) {
+  $dropdown_values=array();
+  $query = \Drupal::database()->select('node_field_data', 'y1');
+  $query->addField('y1', array('title', 'nid'));
+  $query->addField('y1', 'title');
+  $query->addField('y1', 'nid');
+  $query->join('node', 'y2', 'y1.nid = y2.nid');
+  $query->condition('y1.status', 1);
+  $query->condition('y1.type','application');
+  $query= $query->execute()->fetchAll();
+  foreach ($query as $key => $value) {
+    $title[$value->nid]=$value->title;
+  }
+
+  $variables['application_title']=$title;
+
+  $entityManager = \Drupal::service('entity_field.manager');
+  $fields = $entityManager->getFieldStorageDefinitions('node', 'product');
+  $water_quality = options_allowed_values($fields['field_water_type']);
+  $variables['water_quality']=$water_quality;
+
+  //For getting current url arguments
+  $current_path = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $current_path);
+  $variables['node_id']=$path_args[2];
+  $usage = \Drupal::request()->query->get('usage');
+  if ($usage) {
+    $variables['usage']=$usage;
+  } else {
+    $variables['usage']= 0;
+  }
+}
+
+

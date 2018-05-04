@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Theme override for a set of language block links.
+ *
+ * @see template_preprocess_links__language_block()
+ */
+#}
+
+{% if links -%} 
+  <div id='language-dropdown' class="dropdown">
+    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+      {{ attribute(links, lang_code).text }}
+    </button>
+    <ul id="lang-list-0" class="dropdown-menu">
+      {%- for key, item in links -%}
+        {% if lang_code != key %}
+          <li>
+            <a href="{{ item.href }}">
+              {{ item.text }}
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+
+  {#<div id='language-mini-dropdown' class="dropdown">
+    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+      {{ lang_code|slice(0, 2)  }}
+    </button>
+    <ul id="lang-list-1" class="dropdown-menu">
+      {%- for key, item in links -%}
+        {% if lang_code != key %}
+          <li>
+            <a href="{{ item.href }}">
+              {{ key|slice(0, 2) }}
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>#}
+{%- endif %}

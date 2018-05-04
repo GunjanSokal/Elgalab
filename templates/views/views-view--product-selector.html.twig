@@ -1,0 +1,152 @@
+{#
+/**
+ * @file
+ * Default theme implementation for main view template.
+ *
+ * Available variables:
+ * - attributes: Remaining HTML attributes for the element.
+ * - css_name: A css-safe version of the view name.
+ * - css_class: The user-specified classes names, if any.
+ * - header: The optional header.
+ * - footer: The optional footer.
+ * - rows: The results of the view query, if any.
+ * - empty: The content to display if there are no rows.
+ * - pager: The optional pager next/prev links to display.
+ * - exposed: Exposed widget form/info to display.
+ * - feed_icons: Optional feed icons to display.
+ * - more: An optional link to the next page of results.
+ * - title: Title of the view, only used when displaying in the admin preview.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the view title.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the view title.
+ * - attachment_before: An optional attachment view to be displayed before the
+ *   view content.
+ * - attachment_after: An optional attachment view to be displayed after the
+ *   view content.
+ * - dom_id: Unique id for every view being printed to give unique class for
+ *   Javascript.
+ *
+ * @ingroup templates
+ *
+ * @see template_preprocess_views_view()
+ */
+#}
+{%
+  set classes = [
+    'view',
+    'view-' ~ id|clean_class,
+    'view-id-' ~ id,
+    'view-display-id-' ~ display_id,
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {% if title %}
+    {{ title }}
+  {% endif %}
+  {{ title_suffix }}
+  {% if header %}
+    <div class="view-header">
+      {{ header }}
+    </div>
+  {% endif %}
+  {% if exposed %}
+    <div id="sticky-form-product-selector" class="view-filters form-group">
+      <div class='container'>
+        <div class='row'>
+          {{ exposed }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  {#{% if attachment_before %}#}
+    {#<div class="attachment attachment-before">#}
+      {#{{ attachment_before }}#}
+    {#</div>#}
+  {#{% endif %}#}
+  <div class='container'>
+    <div class='row'>
+
+      {% if rows %}
+        <div class='view-wrapper col-xs-12 col-sm-12 col-md-12'>
+
+          <div class='specs'>
+            <div class='spec-header'>  
+              <div id="custom-buttons">
+                <button class="flickity-prev-next-button previous" id="goleft" type="button">
+                  <svg viewBox="0 0 100 100">
+                  <path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z" class="arrow"/>
+                  </svg>
+                </button>
+                <button class="flickity-prev-next-button next"id="goright" type="button" aria-label="next">
+                  <svg viewBox="0 0 100 100">
+                  <path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z" class="arrow" transform="translate(100, 100) rotate(180) "/>
+                  </svg>
+                </button>
+              </div>
+              <div class="bottom-shadow"></div>
+            </div>  
+            {% for fieldtitle in fieldtitles %}
+
+              {% if fieldtitle.type == 'header' %}
+                <div class="section-title">
+                  <h4 class="spec-title spec-header">{{ fieldtitle.name }}</h4>
+                </div>
+              {% elseif fieldtitle.type == 'impurities' %}
+                <div class="spec-impurities-cell">
+                  <ul>
+                    {% for impurity_name in fieldtitle.name %}
+                      <li>
+                        {{ impurity_name }}
+                      </li>  
+                    {% endfor %}   
+                  </ul> 
+                </div>
+              {% else %}
+                 {% if fieldtitle.exclude != true %}
+                <div class="spec-title-cell">
+                  <div class="spec-title">{{ fieldtitle.name }}</div>
+                </div>
+                 {% endif %}
+              {% endif %}
+
+            {% endfor %} 
+          </div>
+          <div class="view-content">
+            {{ rows }}
+          </div>
+        </div>
+      {% elseif empty %}
+        <div class="view-empty">
+          {{ empty }}
+        </div>
+      {% endif %}
+
+      {% if pager %}
+        {{ pager }}
+      {% endif %}
+      {% if attachment_after %}
+        <div class="attachment attachment-after">
+          {{ attachment_after }}
+        </div>
+      {% endif %}
+      {% if more %}
+        {{ more }}
+      {% endif %}
+      {% if footer %}
+        <div class="view-footer">
+          {{ footer }}
+        </div>
+      {% endif %}
+      {% if feed_icons %}
+        <div class="feed-icons">
+          {{ feed_icons }}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
